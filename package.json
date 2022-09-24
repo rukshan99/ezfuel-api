@@ -1,0 +1,19 @@
+{
+  "name": "ezfuelapi",
+  "version": "1.0.0",
+  "description": "Restful web services for ezFuel app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rukshan99/ezfuel-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rukshan99/ezfuel-api/issues"
+  },
+  "homepage": "https://github.com/rukshan99/ezfuel-api#readme"
+}
