@@ -44,7 +44,7 @@ const createShed = async (req, res, next) => {
             city,
             district,
             name,
-            fuelArrivalTime: Date.now().toString(),
+            fuelArrivalTime: Date().toString(),
             fuelFinishedTime: '',
             isFuelAvailable: true,
             capacity,
