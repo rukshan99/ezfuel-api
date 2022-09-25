@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const HttpError = require('../helpers/http.error');
 const Shed = require('../schemas/shed.schema');
 
+/*
+* Controller to get all the sheds from the sheds collection in MongoDB
+*/
 const getAllSheds = async (req, res) => {
     await Shed.find()
         .then(data => {
@@ -13,6 +16,9 @@ const getAllSheds = async (req, res) => {
         })
 }
 
+/*
+* Controller to get a shed by its shedId from the sheds collection in MongoDB
+*/
 const getShedById = async (req, res) => {
     const shedId = req.params.shedId;
 
@@ -29,6 +35,9 @@ const getShedById = async (req, res) => {
         });
 }
 
+/*
+* Controller to create a shed and save in MongoDB
+*/
 const createShed = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

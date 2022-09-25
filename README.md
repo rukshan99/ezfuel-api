@@ -8,4 +8,4 @@ Runs the API in development mode.
 > In the `.env` file you should define these variables. `MONGO_DB_CONNECTION_STRING`
 
 #### Useful links
-- [Tasks breakdown doc](https://1drv.ms/w/s!AkAbXiOMyMLxkXdkbQf16dkqiN6_?e=IYIHZ5)
+- [Task breakdown doc](https://1drv.ms/w/s!AkAbXiOMyMLxkXdkbQf16dkqiN6_?e=IYIHZ5)
