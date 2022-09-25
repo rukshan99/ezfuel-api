@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 require('dotenv').config({ path: __dirname + '/.env' });
 
 const UserRoutes = require('./routes/user.routes');
+const ShedRoutes = require('./routes/shed.routes');
 const connectionString = process.env['MONGO_DB_CONNECTION_STRING'];
 
 app = express();
@@ -16,7 +17,9 @@ app.use(bodyParser.json({ limit: '50mb' }));
 
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-app.use('/api/v1/', UserRoutes);
+const commonURL = '/api/v1/';
+app.use(commonURL, UserRoutes);
+app.use(commonURL, ShedRoutes);
 
 mongoose
     .connect(connectionString)
