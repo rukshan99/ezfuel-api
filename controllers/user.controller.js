@@ -13,7 +13,6 @@ const createUser = async (req, res, next) => {
     }
     const { userId, firstName, lastName, password, vehicleType } = req.body;
     const user = await User.findOne({ nic: userId });
-
     if (!user) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
@@ -46,8 +45,7 @@ const createUser = async (req, res, next) => {
 
 const authUser = async (req, res) => {
     try {
-        const userId = req.body.userId;
-        const password = req.body.password;
+        const { userId, password } = req.body;
         if (userId == "admin" && password == "admin") {
             res.send({ result: "Success", user: { userId: 'admin', role: 'admin' } });
         }
@@ -60,7 +58,7 @@ const authUser = async (req, res) => {
         } else {
             isPasswordMatch = await bcrypt.compare(password, user.password);
             if (isPasswordMatch) {
-                const { password, ...userWithoutPassword } = user;
+                const { password, ...userWithoutPassword } = user._doc;
                 res.send({ result: "Success", user: userWithoutPassword });
             } else {
                 res.send("Invalid credentials")
