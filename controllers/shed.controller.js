@@ -32,7 +32,8 @@ const createShed = async (req, res, next) => {
             fuelFinishedTime: '',
             isFuelAvailable: true,
             capacity,
-            availableAmount: capacity
+            availableAmount: capacity,
+            uom: "Litre"
         });
         try {
             const session = await mongoose.startSession();

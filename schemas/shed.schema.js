@@ -26,15 +26,19 @@ const shedSchema = new mongoose.Schema({
     },
     isFuelAvailable: {
         type: Boolean,
-        required: [true, 'name is required']
+        required: [true, 'isFuelAvailable is required']
     },
     capacity: {
         type: Number,
-        required: [true, 'name is required']
+        required: [true, 'capacity is required']
     },
     availableAmount: {
         type: Number,
-        required: [true, 'name is required']
+        required: [true, 'availableAmount is required']
+    },
+    uom: {
+        type: String,
+        required: [true, 'uom is required']
     }
 })
 
