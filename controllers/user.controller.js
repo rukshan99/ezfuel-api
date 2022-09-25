@@ -4,7 +4,9 @@ const bcrypt = require('bcryptjs');
 const HttpError = require('../helpers/http.error');
 const User = require('../schemas/user.schema');
 
-
+/*
+* Controller to create a user(customer) and save in MongoDB
+*/
 const createUser = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -43,6 +45,9 @@ const createUser = async (req, res, next) => {
     res.send("fail");
 };
 
+/*
+* Controller to authenticate a user
+*/
 const authUser = async (req, res) => {
     try {
         const { userId, password } = req.body;

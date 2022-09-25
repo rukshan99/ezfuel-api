@@ -21,6 +21,9 @@ const commonURL = '/api/v1/';
 app.use(commonURL, UserRoutes);
 app.use(commonURL, ShedRoutes);
 
+/*
+* Connecting to MongoDB Atlas cluster and starting the server
+*/
 mongoose
     .connect(connectionString)
     .then(() => {
