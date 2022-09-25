@@ -21,10 +21,10 @@ const createShed = async (req, res, next) => {
     }
     const { city, district, name, capacity } = req.body;
     const shedId = city + '-' + district + '-' + name.replace(/\s/g, '');
-    const shed = await Shed.findOne({ shedId: shedId });
+    const shed = await Shed.findOne({ shedId: shedId.toLowerCase() });
     if (!shed) {
         const newShed = new Shed({
-            shedId,
+            shedId: shedId.toLowerCase(),
             city,
             district,
             name,
