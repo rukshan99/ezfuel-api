@@ -5,12 +5,28 @@ const Shed = require('../schemas/shed.schema');
 
 const getAllSheds = async (req, res) => {
     await Shed.find()
-    .then(data => {
-        res.status(200).send({ data: data});
-    })
-    .catch(error => {
-        res.status(500).send({ error: error.message});
-    })
+        .then(data => {
+            res.status(200).send({ data: data });
+        })
+        .catch(error => {
+            res.status(500).send({ error: error.message });
+        })
+}
+
+const getShedById = async (req, res) => {
+    const shedId = req.params.shedId;
+
+    Shed.findOne({ shedId })
+        .then(data => {
+            if (!data) {
+                res.status(404).send({ message: "Shed not found. Check ID: " + shedId });
+            } else {
+                res.status(200).send({ data: data });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({ message: "Error retrieving shed with ID:" + shedId });
+        });
 }
 
 const createShed = async (req, res, next) => {
@@ -56,4 +72,5 @@ const createShed = async (req, res, next) => {
 };
 
 exports.getAllSheds = getAllSheds;
+exports.getShedById = getShedById;
 exports.createShed = createShed;
