@@ -12,8 +12,8 @@ const timeSchema = new mongoose.Schema({
     departureTime: {
         type: String
     },
-    rowVersion: {
-        type: String,
+    isInQueue: {
+        type: Boolean,
         required: [true, 'rowVersion is required']
     },
     shedId: {
