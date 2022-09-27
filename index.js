@@ -7,6 +7,7 @@ require('dotenv').config({ path: __dirname + '/.env' });
 const UserRoutes = require('./routes/user.routes');
 const ShedRoutes = require('./routes/shed.routes');
 const timeRoutes = require('./routes/time.routes');
+const adminRoutes = require('./routes/admin.routes');
 const connectionString = process.env['MONGO_DB_CONNECTION_STRING'];
 
 app = express();
@@ -22,6 +23,7 @@ const commonURL = '/api/v1/';
 app.use(commonURL, UserRoutes);
 app.use(commonURL, ShedRoutes);
 app.use(commonURL, timeRoutes);
+app.use(commonURL, adminRoutes);
 
 /*
 * Connecting to MongoDB Atlas cluster and starting the server
