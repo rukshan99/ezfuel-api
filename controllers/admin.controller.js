@@ -16,8 +16,8 @@ let transport = nodemailer.createTransport({
     host: 'smtp.mailtrap.io',
     port: 2525,
     auth: {
-       user: 'ddca7a9c425ee2',
-       pass: 'c8d2cdcd9cd294'
+        user: 'ddca7a9c425ee2',
+        pass: 'c8d2cdcd9cd294'
     }
 });
 
@@ -105,7 +105,7 @@ const createPurchaseOrder = async (req, res, next) => {
                 to: mobile
             })
             .then(message => console.log(message.sid));
-        
+
         // Sending an e-mail to the supplier regarding the purchase order and details
         const emailObj = {
             from: 'admin@ezfuel.lk',
@@ -113,11 +113,11 @@ const createPurchaseOrder = async (req, res, next) => {
             subject: 'Purchase Order: ' + orderId,
             text: JSON.stringify(newPurchaseOrder.toObject())
         };
-        transport.sendMail(emailObj, function(err, info) {
+        transport.sendMail(emailObj, function (err, info) {
             if (err) {
-              console.log(err)
+                console.log(err)
             } else {
-              console.log(info);
+                console.log(info);
             }
         });
 
@@ -129,6 +129,47 @@ const createPurchaseOrder = async (req, res, next) => {
     res.send("fail");
 };
 
+/*
+* Controller to receive fuel amounts to a shed
+*/
+const receiveFuel = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return next(new HttpError('Invalid inputs. Please check again.', 422));
+    }
+    const { shedId, dieselAmount, petrolAmount } = req.body;
+    try {
+        const session = await mongoose.startSession();
+        session.startTransaction();
+        const log = await Shed.findOneAndUpdate(
+            {
+                shedId: shedId,
+                dieselCapacity: { $gt: `dieselAvailableAmount + ${dieselAmount}` },
+                petrolCapacity: { $gt: `petrolAvailableAmount + ${petrolAmount}` }
+            },
+            {
+                '$inc': {
+                    dieselAvailableAmount: dieselAmount || 0,
+                    petrolAvailableAmount: petrolAmount || 0
+                }
+            },
+            {
+                new: true
+            }
+        );
+        await session.commitTransaction();
+        res.status(201).json({ data: log });
+    } catch (err) {
+        const error = new HttpError(
+            'Error occured while logging details. Please try again.',
+            500
+        );
+        return next(error);
+    }
+}
+
 exports.getCountAllVehicles = getCountAllVehicles;
 exports.getRemainingFuelAmounts = getRemainingFuelAmounts;
 exports.createPurchaseOrder = createPurchaseOrder;
+exports.receiveFuel = receiveFuel;
