@@ -10,12 +10,16 @@ const twilioAccountSid = process.env['TWILIO_ACCOUNT_SID'];
 const twilioAuthToken = process.env['TWILIO_AUTH_TOKEN'];
 const twilioClient = require('twilio')(twilioAccountSid, twilioAuthToken);
 
-// Mailtrap email service related imports and configurations
-const { MailtrapClient } = require("mailtrap");
-const mailtrapToken = process.env['MAILTRAP_API_TOKEN'];
-const mailtrapSenderMail = "peter@mailtrap.com";
-const mailTrapClient = new MailtrapClient({ token: mailtrapToken });
-const sender = { name: "ezFuel", email: mailtrapSenderMail };
+// Mailtrap SMTP service and Nodemailer related imports and configurations
+const nodemailer = require('nodemailer');
+let transport = nodemailer.createTransport({
+    host: 'smtp.mailtrap.io',
+    port: 2525,
+    auth: {
+       user: 'ddca7a9c425ee2',
+       pass: 'c8d2cdcd9cd294'
+    }
+});
 
 /*
 * Controller to get the count of waiting vehicles in a shed
@@ -93,24 +97,29 @@ const createPurchaseOrder = async (req, res, next) => {
         // Sending a text message to the supplier to notify about the created purchase order
         twilioClient.messages
             .create({
-                body: shedId + 'has sent a purchase order through ezFuel. Please check the email '
-                    + email + '. Purchase order summary: Fuel type = ' + fuelType
-                    + ' UoM = ' + uom
-                    + 'Amount = ' + amount,
+                body: '\r\n' + shedId + ' has sent a purchase order through ezFuel. Please check the email: '
+                    + email + '\r\nPurchase order summary:\r\nFuel type = ' + fuelType
+                    + '\r\nUoM = Litre'
+                    + '\r\nAmount = ' + amount,
                 from: '+16899994974',
                 to: mobile
             })
             .then(message => console.log(message.sid));
         
         // Sending an e-mail to the supplier regarding the purchase order and details
-        mailTrapClient
-            .send({
-                from: sender,
-                to: [{ email }],
-                subject: 'Purchase Order: ' + orderId,
-                text: JSON.stringify(newPurchaseOrder.toObject()),
-            })
-            .then(console.log, console.error);
+        const emailObj = {
+            from: 'admin@ezfuel.lk',
+            to: email,
+            subject: 'Purchase Order: ' + orderId,
+            text: JSON.stringify(newPurchaseOrder.toObject())
+        };
+        transport.sendMail(emailObj, function(err, info) {
+            if (err) {
+              console.log(err)
+            } else {
+              console.log(info);
+            }
+        });
 
         res.status(201).json({ purchaseOrder: newPurchaseOrder });
     }

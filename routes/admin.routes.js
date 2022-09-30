@@ -8,6 +8,6 @@ const AdminController = require('../controllers/admin.controller');
 */
 router.get('/admin/countAllVehicles/:shedId', AdminController.getCountAllVehicles);
 router.get('/admin/remainingFuelAmounts/:shedId', AdminController.getRemainingFuelAmounts);
-router.get('/admin/purchaseOrders', AdminController.createPurchaseOrder);
+router.post('/admin/purchaseOrders', AdminController.createPurchaseOrder);
 
 module.exports = router;
