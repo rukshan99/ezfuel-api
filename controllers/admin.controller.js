@@ -140,26 +140,39 @@ const receiveFuel = async (req, res, next) => {
     }
     const { shedId, dieselAmount, petrolAmount } = req.body;
     try {
-        const session = await mongoose.startSession();
-        session.startTransaction();
-        const log = await Shed.findOneAndUpdate(
-            {
-                shedId: shedId,
-                dieselCapacity: { $gt: `dieselAvailableAmount + ${dieselAmount}` },
-                petrolCapacity: { $gt: `petrolAvailableAmount + ${petrolAmount}` }
-            },
-            {
-                '$inc': {
-                    dieselAvailableAmount: dieselAmount || 0,
-                    petrolAvailableAmount: petrolAmount || 0
+        Shed.findOne({ shedId }, 'dieselCapacity dieselAvailableAmount petrolCapacity petrolAvailableAmount')
+            .then(async capacityDetails => {
+                if (!capacityDetails) {
+                    res.status(404).send({ message: "Shed not found. Check ID: " + shedId });
+                } else {
+                    if (capacityDetails.dieselCapacity < (capacityDetails.dieselAvailableAmount + dieselAmount) ||
+                        capacityDetails.petrolCapacity < (capacityDetails.petrolAvailableAmount + petrolAmount)) {
+                        res.status(200).send({ message: "Can not receive more fuel. Shed capacities full." });
+                    } else {
+                        const session = await mongoose.startSession();
+                        session.startTransaction();
+                        const log = await Shed.findOneAndUpdate(
+                            {
+                                shedId: shedId
+                            },
+                            {
+                                '$inc': {
+                                    dieselAvailableAmount: dieselAmount || 0,
+                                    petrolAvailableAmount: petrolAmount || 0
+                                }
+                            },
+                            {
+                                new: true
+                            }
+                        );
+                        await session.commitTransaction();
+                        res.status(201).json({ data: log });
+                    }
                 }
-            },
-            {
-                new: true
-            }
-        );
-        await session.commitTransaction();
-        res.status(201).json({ data: log });
+            })
+            .catch(err => {
+                res.status(500).send({ message: "Error getting fuel amounts for shed with ID:" + shedId });
+            });
     } catch (err) {
         const error = new HttpError(
             'Error occured while logging details. Please try again.',
