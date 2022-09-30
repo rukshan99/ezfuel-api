@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 const purchaseOrderSchema = new mongoose.Schema({
+    orderId: {
+        type: String,
+        required: [true, 'orderId is required']
+    },
     adminId: {
         type: String,
         required: [true, 'adminId is required']
@@ -16,6 +20,10 @@ const purchaseOrderSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'email is required']
+    },
+    mobile: {
+        type: String,
+        required: [true, 'mobile is required']
     },
     fuelType: {
         type: String,
