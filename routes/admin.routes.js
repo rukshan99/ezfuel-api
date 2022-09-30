@@ -6,7 +6,8 @@ const AdminController = require('../controllers/admin.controller');
 /*
 * Defining endpoints for Admin related controllers
 */
-router.get('/admin/getCountAllVehicles/:shedId', AdminController.getCountAllVehicles);
-router.get('/admin/getRemainingFuelAmounts/:shedId', AdminController.getRemainingFuelAmounts);
+router.get('/admin/countAllVehicles/:shedId', AdminController.getCountAllVehicles);
+router.get('/admin/remainingFuelAmounts/:shedId', AdminController.getRemainingFuelAmounts);
+router.get('/admin/purchaseOrders', AdminController.createPurchaseOrder);
 
 module.exports = router;
