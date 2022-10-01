@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const HttpError = require('../helpers/http.error');
 const Time = require('../schemas/time.schema');
+const Shed = require('../schemas/shed.schema');
 
 /*
 * Controller to get the count of waiting vehicles in a shed
@@ -22,4 +23,24 @@ const getCountAllVehicles = async (req, res) => {
         });
 }
 
+/*
+* Controller to get the remaining fuel amounts in a shed
+*/
+const getRemainingFuelAmounts = async (req, res) => {
+    const shedId = req.params.shedId;
+
+    Shed.findOne({ shedId }, 'dieselAvailableAmount petrolAvailableAmount')
+        .then(data => {
+            if (!data) {
+                res.status(404).send({ message: "Shed not found. Check ID: " + shedId });
+            } else {
+                res.status(200).send({ fuelAmounts: data });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({ message: "Error getting fuel amounts for shed with ID:" + shedId });
+        });
+}
+
 exports.getCountAllVehicles = getCountAllVehicles;
+exports.getRemainingFuelAmounts = getRemainingFuelAmounts;
