@@ -23,8 +23,11 @@
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-validator": "^6.14.2",
+    "mailtrap": "^3.0.0",
     "mongodb": "^4.10.0",
     "mongoose": "^6.6.1",
-    "nodemon": "^2.0.20"
+    "nodemailer": "^6.8.0",
+    "nodemon": "^2.0.20",
+    "twilio": "^3.82.1"
   }
 }
