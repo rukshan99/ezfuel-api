@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const orderSchema = new mongoose.Schema({
+const purchaseOrderSchema = new mongoose.Schema({
     adminId: {
         type: String,
         required: [true, 'adminId is required']
@@ -31,6 +31,6 @@ const orderSchema = new mongoose.Schema({
     }
 })
 
-const Order = new mongoose.model('orders', orderSchema);
+const PurchaseOrder = new mongoose.model('purchaseOrders', purchaseOrderSchema);
 
-module.exports = Order;
+module.exports = PurchaseOrder;
