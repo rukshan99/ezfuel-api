@@ -13,17 +13,18 @@ const createUser = async (req, res, next) => {
         console.log(errors);
         return next(new HttpError('Invalid inputs. Please check again.', 422));
     }
-    const { userId, firstName, lastName, password, vehicleType } = req.body;
+    const { userId, firstName, lastName, password, vehicleType, fuelType } = req.body;
     const user = await User.findOne({ nic: userId });
     if (!user) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
             nic: userId,
-            firstName: firstName,
-            lastName: lastName,
+            firstName,
+            lastName,
             password: hashedPassword,
             role: 'customer',
-            vehicleType: vehicleType
+            vehicleType,
+            fuelType
         });
         try {
             const session = await mongoose.startSession();

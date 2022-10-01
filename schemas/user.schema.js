@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     vehicleType: {
         type: String,
         required: [true, 'vehicleType is required']
+    },
+    fuelType: {
+        type: String,
+        required: [true, 'fuelType is required']
     }
 })
 

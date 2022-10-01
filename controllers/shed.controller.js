@@ -44,7 +44,7 @@ const createShed = async (req, res, next) => {
         console.log(errors);
         return next(new HttpError('Invalid inputs. Please check again.', 422));
     }
-    const { city, district, name, capacity } = req.body;
+    const { city, district, name, petrolCapacity, dieselCapacity } = req.body;
     const shedId = city + '-' + district + '-' + name.replace(/\s/g, '');
     const shed = await Shed.findOne({ shedId: shedId.toLowerCase() });
     if (!shed) {
@@ -56,8 +56,10 @@ const createShed = async (req, res, next) => {
             fuelArrivalTime: Date().toString(),
             fuelFinishedTime: '',
             isFuelAvailable: true,
-            capacity,
-            availableAmount: capacity,
+            petrolCapacity,
+            dieselCapacity,
+            petrolAvailableAmount: petrolCapacity,
+            dieselAvailableAmount: dieselCapacity,
             uom: "Litre"
         });
         try {
