@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const HttpError = require('../helpers/http.error');
 const Time = require('../schemas/time.schema');
 const Shed = require('../schemas/shed.schema');
+const User = require('../schemas/user.schema');
 const PurchaseOrder = require('../schemas/purchaseOrder.schema');
 
 // Twilio messaging service related imports and configurations
@@ -34,6 +35,29 @@ const getCountAllVehicles = async (req, res) => {
         .catch(err => {
             res.status(500).send({ message: "Error getting count for shed with ID:" + shedId });
         });
+}
+
+/*
+* Controller to get the count of waiting vehicles by type in a shed
+*/
+const getCountAllVehiclesByType = async (req, res) => {
+    const shedId = req.params.shedId;
+    const vehicleType = req.params.vehicleType;
+    var count = 0;
+    try {
+        // Getting all the NICs of the customers in the queue of the shed
+        const nicList = await Time.find({ shedId, isInQueue: true }, { nic: 1, _id: 0 });
+        // Getting and counting all the customers with NICs and the vehicleType
+        await nicList.map(async (user, i) => {
+            const userVehicle = await User.findOne({ nic: user.nic }, { vehicleType: 1, _id: 0 });
+            if (userVehicle.vehicleType === vehicleType) count++;
+            if (nicList.length === i + 1) {
+                res.status(200).send({ countAllVehiclesByType: count });
+            }
+        });
+    } catch (err) {
+        res.status(500).send({ message: "Error getting details for shed with ID: " + shedId + " \\ " + err });
+    }
 }
 
 /*
@@ -183,6 +207,7 @@ const receiveFuel = async (req, res, next) => {
 }
 
 exports.getCountAllVehicles = getCountAllVehicles;
+exports.getCountAllVehiclesByType = getCountAllVehiclesByType;
 exports.getRemainingFuelAmounts = getRemainingFuelAmounts;
 exports.createPurchaseOrder = createPurchaseOrder;
 exports.receiveFuel = receiveFuel;
