@@ -183,7 +183,9 @@ const receiveFuel = async (req, res, next) => {
                                 '$inc': {
                                     dieselAvailableAmount: dieselAmount || 0,
                                     petrolAvailableAmount: petrolAmount || 0
-                                }
+                                },
+                                isDieselAvailable: true,
+                                isPetrolAvailable: true
                             },
                             {
                                 new: true

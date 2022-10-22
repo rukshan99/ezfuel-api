@@ -9,5 +9,6 @@ const ShedController = require('../controllers/shed.controller');
 router.post('/sheds', ShedController.createShed);
 router.get('/sheds', ShedController.getAllSheds);
 router.get('/sheds/:shedId', ShedController.getShedById);
+router.put( '/sheds/sales', ShedController.recordSale);
 
 module.exports = router;

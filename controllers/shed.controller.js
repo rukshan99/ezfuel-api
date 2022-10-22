@@ -3,6 +3,12 @@ const mongoose = require('mongoose');
 const HttpError = require('../helpers/http.error');
 const Shed = require('../schemas/shed.schema');
 
+// Twilio messaging service related imports and configurations
+const twilioAccountSid = process.env['TWILIO_ACCOUNT_SID'];
+const twilioAuthToken = process.env['TWILIO_AUTH_TOKEN'];
+const twilioClient = require('twilio')(twilioAccountSid, twilioAuthToken);
+
+
 /*
 * Controller to get all the sheds from the sheds collection in MongoDB
 */
@@ -55,7 +61,8 @@ const createShed = async (req, res, next) => {
             name,
             fuelArrivalTime: Date().toString(),
             fuelFinishedTime: '',
-            isFuelAvailable: true,
+            isPetrolAvailable: true,
+            isDieselAvailable: true,
             petrolCapacity,
             dieselCapacity,
             petrolAvailableAmount: petrolCapacity,
@@ -82,6 +89,83 @@ const createShed = async (req, res, next) => {
     res.send("fail");
 };
 
+/*
+* Controller to reduce fuel amounts in a shed
+*/
+const recordSale = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return next(new HttpError('Invalid inputs. Please check again.', 422));
+    }
+    var { shedId, fuelType, amount, uom } = req.body;
+    var newShedDetails = {};
+    var msgToAdmin = "";
+    try {
+        const shed = await Shed.findOne({ shedId });
+        if (fuelType === "petrol") {
+            if ((shed.petrolAvailableAmount - amount) < 2000 || shed.petrolAvailableAmount < amount) {
+                // Checking remaining petrol amount and send admin an alert to purchase
+                const remainingAmount = 0 ? (shed.petrolAvailableAmount - amount) < 0 : (shed.petrolAvailableAmount - amount);
+                msgToAdmin = "Fuel type: Petrol is low/finished. Please make a purchase order. Remaining Petrol = " + remainingAmount;
+                await Shed.findOneAndUpdate({ shedId }, {
+                    isPetrolAvailable: false
+                });
+                // Sending text message to admin
+                twilioClient.messages
+                    .create({
+                        body: '\n' + msgToAdmin,
+                        from: '+16899994974',
+                        to: '+94763754996'
+                    })
+                    .then(message => console.log(message.sid));
+            }
+            // Updating remaining fuel amounts
+            if (shed.petrolAvailableAmount < amount) {
+                amount = shed.petrolAvailableAmount;
+            }
+            newShedDetails = await Shed.findOneAndUpdate({ shedId }, {
+                '$inc': {
+                    petrolAvailableAmount: -amount
+                }
+            }, {
+                new: true,
+            });
+        } else {
+            if ((shed.dieselAvailableAmount - amount) < 2000 || shed.dieselAvailableAmount < amount) {
+                // Checking remaining diesel amount and send admin an alert to purchase
+                const remainingAmount = 0 ? (shed.dieselAvailableAmount - amount) < 0 : (shed.dieselAvailableAmount - amount);
+                msgToAdmin = "Fuel type: Diesel is low/finished. Please make a purchase order. Remaining Diesel = " + remainingAmount;
+                await Shed.findOneAndUpdate({ shedId }, {
+                    isDieselAvailable: false
+                });
+                // Sending text message to admin
+                twilioClient.messages
+                    .create({
+                        body: '\n' + msgToAdmin,
+                        from: '+16899994974',
+                        to: '+94763754996'
+                    })
+                    .then(message => console.log(message.sid));
+            }
+            // Updating remaining fuel amounts
+            if (shed.petrolAvailableAmount < amount) amount = shed.petrolAvailableAmount;
+            newShedDetails = await Shed.findOneAndUpdate({ shedId }, {
+                '$inc': {
+                    dieselAvailableAmount: -amount
+                }
+            }, {
+                new: true,
+            });
+        }
+        res.status(200).json({ newShedDetails });
+    } catch (err) {
+        res.status(500).send({ message: err });
+    }
+
+}
+
 exports.getAllSheds = getAllSheds;
 exports.getShedById = getShedById;
 exports.createShed = createShed;
+exports.recordSale = recordSale;
