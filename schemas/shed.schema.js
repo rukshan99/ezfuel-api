@@ -24,9 +24,13 @@ const shedSchema = new mongoose.Schema({
     fuelFinishedTime: {
         type: String
     },
-    isFuelAvailable: {
+    isPetrolAvailable: {
         type: Boolean,
-        required: [true, 'isFuelAvailable is required']
+        required: [true, 'isPetrolAvailable is required']
+    },
+    isDieselAvailable: {
+        type: Boolean,
+        required: [true, 'isDieselAvailable is required']
     },
     petrolCapacity: {
         type: Number,
@@ -34,6 +38,7 @@ const shedSchema = new mongoose.Schema({
     },
     petrolAvailableAmount: {
         type: Number,
+        min: 0,
         required: [true, 'availableAmount is required']
     },
     dieselCapacity: {
@@ -42,6 +47,7 @@ const shedSchema = new mongoose.Schema({
     },
     dieselAvailableAmount: {
         type: Number,
+        min: 0,
         required: [true, 'availableAmount is required']
     },
     uom: {
