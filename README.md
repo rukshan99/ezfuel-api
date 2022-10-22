@@ -1,6 +1,6 @@
 # Restful web services for ezFuel app
 
-### `npm start` 
+### `npm run dev` 
 Runs the API in development mode.
 
 > Note: You should first create a `.env` file in the root directory of the project before running the application. 
