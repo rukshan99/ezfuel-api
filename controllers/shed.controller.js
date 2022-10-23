@@ -23,6 +23,25 @@ const getAllSheds = async (req, res) => {
 }
 
 /*
+* Controller to get all the sheds by district and city
+*/
+const getAllShedsByLocation = async (req, res) => {
+    const district = req.params.district;
+    const city = req.params.city;
+    // case-insensitive search by district and city
+    await Shed.find({
+        district: new RegExp('\\b' + district + '\\b', 'i'),
+        city: new RegExp('\\b' + city + '\\b', 'i')
+    })
+        .then(data => {
+            res.status(200).send({ data: data });
+        })
+        .catch(error => {
+            res.status(500).send({ error: error.message });
+        })
+}
+
+/*
 * Controller to get a shed by its shedId from the sheds collection in MongoDB
 */
 const getShedById = async (req, res) => {
@@ -166,6 +185,7 @@ const recordSale = async (req, res, next) => {
 }
 
 exports.getAllSheds = getAllSheds;
+exports.getAllShedsByLocation = getAllShedsByLocation;
 exports.getShedById = getShedById;
 exports.createShed = createShed;
 exports.recordSale = recordSale;
