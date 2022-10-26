@@ -42,17 +42,18 @@ const getCountAllVehicles = async (req, res) => {
 */
 const getCountAllVehiclesByType = async (req, res) => {
     const shedId = req.params.shedId;
-    const vehicleType = req.params.vehicleType;
-    var count = 0;
+    var lightCount = 0;
+    var heavyCount = 0;
     try {
         // Getting all the NICs of the customers in the queue of the shed
         const nicList = await Time.find({ shedId, isInQueue: true }, { nic: 1, _id: 0 });
         // Getting and counting all the customers with NICs and the vehicleType
         await nicList.map(async (user, i) => {
             const userVehicle = await User.findOne({ nic: user.nic }, { vehicleType: 1, _id: 0 });
-            if (userVehicle.vehicleType === vehicleType) count++;
+            if (userVehicle.vehicleType === "heavy") heavyCount++;
+            if (userVehicle.vehicleType === "light") lightCount++;
             if (nicList.length === i + 1) {
-                res.status(200).send({ countAllVehiclesByType: count });
+                res.status(200).send({ heavy: heavyCount, light: lightCount });
             }
         });
     } catch (err) {
