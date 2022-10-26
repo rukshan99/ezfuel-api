@@ -8,7 +8,7 @@ ezFuel is a mobile application with a community-driven approach to manage fuel q
 
 ## System Overview
 
-![overview for ead drawio](https://user-images.githubusercontent.com/68691231/196745832-9a885e31-db2c-4eb3-b492-cdf47d99c9f7.png)
+![overview for ead 2](https://user-images.githubusercontent.com/68691231/198070900-ca32b7b0-9871-48b5-9bdf-b9521853f052.png)
 
 ## Database Design
 
