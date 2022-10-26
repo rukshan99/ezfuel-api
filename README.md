@@ -17,9 +17,7 @@ ezFuel is a mobile application with a community-driven approach to manage fuel q
 ### `npm run dev` 
 Runs the API in development mode.
 
-> Note: You should first create a `.env` file in the root directory of the project before running the application. 
+> Note: You should first create a `.env` file in the root directory of the project before running the application in Dev environment. 
 > 
-> In the `.env` file you should define these variables. `MONGO_DB_CONNECTION_STRING`
+> In the `.env` file you should define these variables. `MONGO_DB_CONNECTION_STRING, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN`
 
-#### Useful links
-- [Task breakdown doc](https://1drv.ms/w/s!AkAbXiOMyMLxkXdkbQf16dkqiN6_?e=IYIHZ5)
